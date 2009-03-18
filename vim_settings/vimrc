@@ -73,14 +73,18 @@ nnoremap <F6> :wall<CR>:make %:t:r.test<CR>
 nnoremap <F4> :cn<CR>
 
 " Code review helpers (assumes you are working from a list of changed files)
-" Diff file under cursor with $BRANCHED_ON_REV version and keep the original list 3 lines high at the bottom of the screen.
+" Diff file under cursor with $BRANCHED_ON_REV version and keep the original
+" list 3 lines high at the bottom of the screen.
 nnoremap <F10> <C-W><C-F><C-W>_3<C-W>-:VCSVimDiff $BRANCHED_ON_REV<CR><C-W><C-X>
-" Go back to the list of changed files (the first buffer) and close all other windows
+" Go back to the list of changed files (the first buffer) and close all other
+" windows
 nnoremap <F11> :bf<CR>:only<CR>
 " Move the current line to the bottom of the file, returning to the top
 nnoremap <F12> :move $<cr>:normal '.w<CR>
 
+" Always show information about where the cursor is
 set ruler
+
 " Use a 256-color terminal for better diff colors
 set t_Co=256
 "hi DiffText cterm=underline

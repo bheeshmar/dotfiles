@@ -9,7 +9,8 @@ http://blog.codeslower.com/2008/8/Using-PuTTY-and-SSL-to-securely-access-GitHub-
 To use my vim settings, create this ~/.vimrc:
 
 <code>
-    set runtimepath=~/dotfiles/vim_settings,$RUNTIMEPATH
+    " Prepend the path to my custom settings and search for "vimrc" there.
+    set runtimepath^=$HOME/dotfiles/vim_settings
     runtime vimrc
 </code>
 
