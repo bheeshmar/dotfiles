@@ -1,0 +1,134 @@
+" Set cursor to last position you were at when you opened the file
+set viminfo='10,\"100,:20,%,n~/.viminfo
+au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
+
+" Set tabstop and shiftwidth together
+set tabstop=4
+set shiftwidth=4
+
+" Expand tabs to spaces
+set expandtab
+
+" Use the modeline if provided
+set modeline
+
+" Backspace over everything
+set backspace=indent,eol,start
+
+if has("win32")
+	" For Windows GVIM
+	set guifont=Lucida_Console:h9:cANSI
+else
+	" For Linux GVIM
+	set guifont=Monospace\ 10
+	" Hide menu
+	set guioptions-=m
+	" Hide toolbar
+	set guioptions-=T
+end
+
+" Autoindent
+set ai
+
+" Enable filetype detection, enable available plugins and indent files
+filetype plugin indent on
+
+" Enable syntax highlighting
+syntax on
+
+" Search parameters: incremental, highlight, <CR> in normal will clear
+set incsearch
+set hlsearch
+nnoremap <CR> :noh<CR><CR>
+
+" Match braces
+set showmatch
+
+" Use toolchain make within VIM
+set makeprg=/tools/toolchain.10.64/bin/make
+
+" Choose a colorscheme
+colorscheme inkpot
+
+" Allow cursor to move anywhere in visual block mode
+set virtualedit=block
+
+" Don't tab-complete *.o and *.d
+set wildignore+=*.o
+set wildignore+=*.d
+
+" Insert mode abbreviations
+iab cssr std::string const &
+iab inow <C-R>=strftime("%Y%m%dT%H%M")<CR>
+iab dnow <C-R>=strftime("%Y-%m-%d")<CR>
+
+" Add C++ sources to include search path under Linux
+set path+=/tools/toolchain.8.64/include/c++/4.1.1
+set path+=/tools/toolchain.8.64/include/boost
+
+" Keboard shortcuts!
+" Run unit tests after saving files
+nnoremap <F6> :wall<CR>:make %:t:r.test<CR>
+" Next error
+nnoremap <F4> :cn<CR>
+
+" Code review helpers (assumes you are working from a list of changed files)
+"nnoremap <F11> gf:VCSVimDiff $BRANCHED_ON_REV<CR>
+"nnoremap <F12> :bfirst<CR>:only<CR>I* <Esc>:update<CR>jw
+" Diff file under cursor with $BRANCHED_ON_REV version and keep the original list 3 lines high at the bottom of the screen.
+nnoremap <F11> <C-W><C-F><C-W>_3<C-W>-:VCSVimDiff $BRANCHED_ON_REV<CR><C-W><C-X>
+" Go back to the list of changed files (the first buffer) and close all other windows
+nnoremap <F12> :bf<CR>:only<CR>
+set ruler
+" Use a 256-color terminal for better diff colors
+set t_Co=256
+"hi DiffText cterm=underline
+
+" Spacebar is page-down, backspace is page-up
+nnoremap <space> <c-f>
+nnoremap <bs>    <c-b>
+
+" Embiggen the screen
+nnoremap <Leader>+ :set lines=50<CR>:set columns=160<CR>
+nnoremap <Leader>- :set lines&<CR>:set columns&<CR>
+
+" Potwiki settings
+if has("win32")
+	let potwiki_home     = "$HOME/My Documents/MyCVS/potwiki/HomePage"
+	let potwiki_home_dir = "$HOME/My Documents/MyCVS/potwiki"
+else
+	let potwiki_home     = "$HOME/mycvs/potwiki/HomePage"
+	let potwiki_home_dir = "$HOME/mycvs/potwiki"
+end
+
+" Autocommands
+autocmd BufNewFile *.h call MakeIncGuard()
+
+"
+" Functions
+" 
+" Create a skeleton of a class
+function! ClassSkeleton()
+	let l:name = input("Class name? ")
+	exec "normal oclass " . l:name . "{public:" . l:name . "() {}~". l:name . "() {}} ; // class " . l:name
+	exec "normal 0=%"
+endfunction
+
+" Add header guards to .h file
+function! MakeIncGuard()
+	let l:basename = substitute(bufname(""), '.*/', '', '')
+	let l:guard = '_' . substitute(toupper(l:basename), '\.', '_', "g")
+	call append(0, "#ifndef " . l:guard)
+	call append(1, "#define " . l:guard)
+	call append(line("$"), "#endif // #ifndef " . l:guard)
+endfunction
+
+autocmd BufNewFile *test*.rb call MakeRubyUnitTester()
+
+"
+" Functions
+" 
+" Fill in the boilerplate for Ruby Unit Tests
+function! MakeRubyUnitTester()
+	exec "normal irequire 'test/unit'class TC_Simple < Test::Unit::TestCase"
+endfunction
