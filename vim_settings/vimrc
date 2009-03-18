@@ -73,12 +73,13 @@ nnoremap <F6> :wall<CR>:make %:t:r.test<CR>
 nnoremap <F4> :cn<CR>
 
 " Code review helpers (assumes you are working from a list of changed files)
-"nnoremap <F11> gf:VCSVimDiff $BRANCHED_ON_REV<CR>
-"nnoremap <F12> :bfirst<CR>:only<CR>I* <Esc>:update<CR>jw
 " Diff file under cursor with $BRANCHED_ON_REV version and keep the original list 3 lines high at the bottom of the screen.
-nnoremap <F11> <C-W><C-F><C-W>_3<C-W>-:VCSVimDiff $BRANCHED_ON_REV<CR><C-W><C-X>
+nnoremap <F10> <C-W><C-F><C-W>_3<C-W>-:VCSVimDiff $BRANCHED_ON_REV<CR><C-W><C-X>
 " Go back to the list of changed files (the first buffer) and close all other windows
-nnoremap <F12> :bf<CR>:only<CR>
+nnoremap <F11> :bf<CR>:only<CR>
+" Move the current line to the bottom of the file, returning to the top
+nnoremap <F12> :move $<cr>:normal '.w<CR>
+
 set ruler
 " Use a 256-color terminal for better diff colors
 set t_Co=256
@@ -92,17 +93,9 @@ nnoremap <bs>    <c-b>
 nnoremap <Leader>+ :set lines=50<CR>:set columns=160<CR>
 nnoremap <Leader>- :set lines&<CR>:set columns&<CR>
 
-" Potwiki settings
-if has("win32")
-	let potwiki_home     = "$HOME/My Documents/MyCVS/potwiki/HomePage"
-	let potwiki_home_dir = "$HOME/My Documents/MyCVS/potwiki"
-else
-	let potwiki_home     = "$HOME/mycvs/potwiki/HomePage"
-	let potwiki_home_dir = "$HOME/mycvs/potwiki"
-end
-
 " Autocommands
 autocmd BufNewFile *.h call MakeIncGuard()
+autocmd BufNewFile *test*.rb call MakeRubyUnitTester()
 
 "
 " Functions
@@ -123,11 +116,6 @@ function! MakeIncGuard()
 	call append(line("$"), "#endif // #ifndef " . l:guard)
 endfunction
 
-autocmd BufNewFile *test*.rb call MakeRubyUnitTester()
-
-"
-" Functions
-" 
 " Fill in the boilerplate for Ruby Unit Tests
 function! MakeRubyUnitTester()
 	exec "normal irequire 'test/unit'class TC_Simple < Test::Unit::TestCase"

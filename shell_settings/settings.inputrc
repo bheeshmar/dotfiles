@@ -18,7 +18,7 @@ set visible-stats on
 
 # List possible completions on Tab, Alt-s cycles
 set show-all-if-ambiguous on
-"\M-s": menu-complete
+"\es": menu-complete
 
 # For bash only
 $if Bash
