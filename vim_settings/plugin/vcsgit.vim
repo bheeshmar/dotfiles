@@ -5,7 +5,7 @@
 " Version:       VCS development
 " Maintainer:    Bob Hiestand <bob.hiestand@gmail.com>
 " License:
-" Copyright (c) 2007 Bob Hiestand
+" Copyright (c) 2008 Bob Hiestand
 "
 " Permission is hereby granted, free of charge, to any person obtaining a copy
 " of this software and associated documentation files (the "Software"), to
@@ -39,6 +39,10 @@
 "   command, this variable is not used.
 
 " Section: Plugin header {{{1
+
+if exists('VCSCommandDisableAll')
+	finish
+endif
 
 if v:version < 700
 	echohl WarningMsg|echomsg 'VCSCommand requires at least VIM 7.0'|echohl None
@@ -221,7 +225,7 @@ function! s:gitFunctions.Review(argList)
 		let revision = a:argList[0]
 	endif
 
-	let oldCwd = VCSCommandChangeToCurrentFileDir(resolve(bufname('%')))
+	let oldCwd = VCSCommandChangeToCurrentFileDir(resolve(bufname(VCSCommandGetOriginalBuffer('%'))))
 	try
 		let prefix = system(VCSCommandGetOption('VCSCommandGitExec', 'git') . ' rev-parse --show-prefix')
 	finally
@@ -229,7 +233,7 @@ function! s:gitFunctions.Review(argList)
 	endtry
 
 	let prefix = substitute(prefix, '\n$', '', '')
-	let blob = revision . ':' . prefix . '<VCSCOMMANDFILE>' 
+	let blob = '"' . revision . ':' . prefix . '<VCSCOMMANDFILE>"'
 	let resultBuffer = s:DoCommand('show ' . blob, 'review', revision, {})
 	if resultBuffer > 0
 		let &filetype=getbufvar(b:VCSCommandOriginalBuffer, '&filetype')
@@ -239,7 +243,7 @@ endfunction
 
 " Function: s:gitFunctions.Status(argList) {{{2
 function! s:gitFunctions.Status(argList)
-	return s:DoCommand(join(['status'] + a:argList), 'log', join(a:argList), {'allowNonZeroExit': 1})
+	return s:DoCommand(join(['status'] + a:argList), 'status', join(a:argList), {'allowNonZeroExit': 1})
 endfunction
 
 " Function: s:gitFunctions.Update(argList) {{{2

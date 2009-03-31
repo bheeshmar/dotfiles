@@ -31,10 +31,13 @@ VCSCommandCVSExec	vcscommand.txt	/*VCSCommandCVSExec*
 VCSCommandCommitOnWrite	vcscommand.txt	/*VCSCommandCommitOnWrite*
 VCSCommandDeleteOnHide	vcscommand.txt	/*VCSCommandDeleteOnHide*
 VCSCommandDiffSplit	vcscommand.txt	/*VCSCommandDiffSplit*
+VCSCommandDisableAll	vcscommand.txt	/*VCSCommandDisableAll*
 VCSCommandDisableExtensionMappings	vcscommand.txt	/*VCSCommandDisableExtensionMappings*
 VCSCommandDisableMappings	vcscommand.txt	/*VCSCommandDisableMappings*
 VCSCommandEdit	vcscommand.txt	/*VCSCommandEdit*
 VCSCommandEnableBufferSetup	vcscommand.txt	/*VCSCommandEnableBufferSetup*
+VCSCommandMapPrefix	vcscommand.txt	/*VCSCommandMapPrefix*
+VCSCommandMappings	vcscommand.txt	/*VCSCommandMappings*
 VCSCommandResultBufferNameExtension	vcscommand.txt	/*VCSCommandResultBufferNameExtension*
 VCSCommandResultBufferNameFunction	vcscommand.txt	/*VCSCommandResultBufferNameFunction*
 VCSCommandSVKExec	vcscommand.txt	/*VCSCommandSVKExec*
@@ -42,6 +45,7 @@ VCSCommandSVNDiffExt	vcscommand.txt	/*VCSCommandSVNDiffExt*
 VCSCommandSVNDiffOpt	vcscommand.txt	/*VCSCommandSVNDiffOpt*
 VCSCommandSVNExec	vcscommand.txt	/*VCSCommandSVNExec*
 VCSCommandSplit	vcscommand.txt	/*VCSCommandSplit*
+VCSCommandVCSTypeOverride	vcscommand.txt	/*VCSCommandVCSTypeOverride*
 [%	matchit.txt	/*[%*
 ]%	matchit.txt	/*]%*
 b:VCSCommandCommand	vcscommand.txt	/*b:VCSCommandCommand*
