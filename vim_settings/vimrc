@@ -107,7 +107,12 @@ autocmd BufNewFile *test*.rb call MakeRubyUnitTester()
 " Create a skeleton of a class
 function! ClassSkeleton()
 	let l:name = input("Class name? ")
-	exec "normal oclass " . l:name . "{public:" . l:name . "() {}~". l:name . "() {}} ; // class " . l:name
+	exec "normal oclass " . l:name . "
+{
+public:
+" . l:name . "() {}
+~". l:name . "() {}
+} ; // class " . l:name
 	exec "normal 0=%"
 endfunction
 
@@ -122,5 +127,12 @@ endfunction
 
 " Fill in the boilerplate for Ruby Unit Tests
 function! MakeRubyUnitTester()
-	exec "normal irequire 'test/unit'class TC_Simple < Test::Unit::TestCase"
+	exec "normal irequire 'test/unit'
+
+class TC_Simple < Test::Unit::TestCase"
 endfunction
+
+" Make newer file appear on right in VCSVimDiff
+augroup VCSCommand
+	autocmd User VCSVimDiffFinish wincmd x
+augroup END
