@@ -28,3 +28,7 @@ endfunction
 
 nnoremap <buffer> <F7> :update<cr>:call BaconContext()<cr>
 nnoremap <buffer> <F8> :update<cr>:call BaconTest()<cr>
+
+set tabstop=2
+set shiftwidth=2
+set expandtab
