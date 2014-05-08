@@ -1,114 +1,135 @@
+set nocompatible | filetype indent plugin on | syn on
+
+" Install plugins using vim-addon-manager, which self-installs if needed
+fun! SetupVAM()
+  let c = get(g:, 'vim_addon_manager', {})
+  let g:vim_addon_manager = c
+  let c.plugin_root_dir = expand('$HOME', 1) . '/.vim/vim-addons'
+  " most used options you may want to use:
+  " let c.log_to_buf = 1
+  " let c.auto_install = 0
+  let &rtp.=(empty(&rtp)?'':',').c.plugin_root_dir.'/vim-addon-manager'
+  if !isdirectory(c.plugin_root_dir.'/vim-addon-manager/autoload')
+    execute '!git clone --depth=1 git://github.com/MarcWeber/vim-addon-manager '
+        \       shellescape(c.plugin_root_dir.'/vim-addon-manager', 1)
+  endif
+  call vam#ActivateAddons([], {'auto_install' : 0})
+endfun
+
+call SetupVAM()
+VAMActivate matchit.zip vim-addon-commenting
+VAMActivate inkpot " 256-color colorscheme
+VAMActivate fugitive " git hotness
+VAMActivate unite
+VAMActivate vimproc
+VAMActivate Tagbar
+VAMActivate ack
+VAMActivate rails
+VAMActivate vim-airline
+VAMActivate github:tpope/vim-vinegar
+
 " Set cursor to last position you were at when you opened the file
 set viminfo='10,\"100,:20,%,n~/.viminfo
-au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
+autocmd BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
 
-" Set tabstop and shiftwidth together
-set tabstop=4
-set shiftwidth=4
-
-" Expand tabs to spaces
-set expandtab
-
-" Use the modeline if provided
-set modeline
-
-" Always show information about where the cursor is
-set ruler
-
-" Use a 256-color terminal for better diff colors
+" Use 256 colors and a nice colorscheme
 set t_Co=256
-"hi DiffText cterm=underline
-
-" Backspace over everything
-set backspace=indent,eol,start
-
-if has("win32")
-	" For Windows GVIM
-	set guifont=Lucida_Console:h9:cANSI
-else
-	" For Linux GVIM
-	set guifont=Monospace\ 10
-	" Hide menu
-	set guioptions-=m
-	" Hide toolbar
-	set guioptions-=T
-end
-
-" Autoindent
-set autoindent
-
-" Enable filetype detection, enable available plugins and indent files
-filetype plugin indent on
-
-" Enable syntax highlighting
-syntax on
-
-" Choose a colorscheme
 colorscheme inkpot
 
-" Search parameters: incremental, highlight, <CR> in normal will clear
+" Backspace over everything
+set backspace=2
+
+" Search case-insensitive (unless mixed case) incrementally with highlight, CR will clear
+set ignorecase
+set smartcase
 set incsearch
 set hlsearch
-nnoremap <CR> :noh<CR><CR>
+nnoremap <cr> :nohl<cr><cr>
 
-" Match braces
-set showmatch
+" Respect modelines
+set modeline
 
-" Allow cursor to move anywhere in visual block mode
-set virtualedit=block
+" Use the ruler to give cursor position
+set ruler
 
-" Don't tab-complete *.o and *.d
-set wildignore+=*.o
-set wildignore+=*.d
+"" Always show the status line
+set laststatus=2
 
-" Insert mode abbreviations
-iab cssr std::string const &
-iab inow <C-R>=strftime("%Y%m%dT%H%M")<CR>
-iab dnow <C-R>=strftime("%Y-%m-%d")<CR>
+" Default to 2 spaces for tabs
+set tabstop=2
+set shiftwidth=2
+set expandtab
 
-" Keyboard shortcuts!
-" Next error
-nnoremap <F4> :cn<CR>
+" Preserve column when jumping around
+set nostartofline
 
-" Code review helpers (assumes you are working from a list of changed files)
-" Diff file under cursor with $BRANCHED_ON_REV version and keep the original
-" list 3 lines high at the bottom of the screen.
-nnoremap <F10> <C-W><C-F><C-W>_3<C-W>-:VCSVimDiff $BRANCHED_ON_REV<CR><C-W><C-X>
-" Go back to the list of changed files (the first buffer) and close all other
-" windows
-nnoremap <F11> :bf<CR>:only<CR>
-" Move the current line to the bottom of the file, returning to the top
-nnoremap <F12> :move $<cr>:normal '.w<CR>
+" Allow mouse use in console
+set mouse=a
 
-" Spacebar is page-down, backspace is page-up
-nnoremap <space> <c-f>
-nnoremap <bs>    <c-b>
+" Sometimes fugitive diffs get confused and lose highlighting
+nnoremap <F2> :diffoff \| syn on<cr>
+nnoremap <F3> :cnext<cr>
+nnoremap <F4> :cprev<cr>
 
-" Embiggen the screen
-nnoremap <Leader>+ :set lines=50<CR>:set columns=160<CR>
-nnoremap <Leader>- :set lines&<CR>:set columns&<CR>
+nnoremap <leader>gs :Gstatus<cr>
+nnoremap <leader>gd :Gdiff<cr>
+nnoremap <leader>gb :Gblame<cr>
+nnoremap <leader>tt :TagbarToggle<cr>
+nnoremap <leader>d :bdelete<cr>
+nnoremap <leader>n :set number!<cr>
 
-" jk in insert mode is short-cut to Escape
+" Highlight trailing whitespace
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+
+" Highlight 81st column
+highlight ColorColumn ctermbg=magenta
+call matchadd('ColorColumn', '\%81v', 100)
+
+" Use jk as another form of Esc
 inoremap jk <Esc>
 
-" Autocommands
-autocmd BufNewFile *.h call MakeIncGuard()
+" Use ag instead of ack
+let g:ackprg = 'ag --nogroup --nocolor --column'
+nnoremap <C-k> :<C-u>Ack <C-r><C-w> lib app<CR>
 
-" Make newer file appear on right in VCSVimDiff
-augroup VCSCommand
-	autocmd User VCSVimDiffFinish wincmd x
-augroup END
-
-"
-" Functions
-" 
-
-" Add header guards to .h file
-function! MakeIncGuard()
-	let l:basename = substitute(bufname(""), '.*/', '', '')
-	let l:guard = '_' . substitute(toupper(l:basename), '\.', '_', "g")
-	call append(0, "#ifndef " . l:guard)
-	call append(1, "#define " . l:guard)
-	call append(line("$"), "#endif // #ifndef " . l:guard)
-endfunction
+" Unite bindings
+" Use the fuzzy matcher for everything
+call unite#filters#matcher_default#use(['matcher_fuzzy'])
+" Use the rank sorter for everything
+call unite#filters#sorter_default#use(['sorter_rank'])
+" Map space to the prefix for Unite
+nnoremap [unite] <Nop>
+nmap <space> [unite]
+" General fuzzy search
+nnoremap <silent> [unite]<space> :<C-u>Unite
+      \ -buffer-name=files buffer bookmark file_rec/async<CR>
+" Quick file search
+nnoremap <silent> [unite]f :<C-u>Unite -buffer-name=files file_rec/async file/new -start-insert<CR>
+" Quick grep from cwd
+nnoremap <silent> [unite]g :<C-u>Unite -buffer-name=grep -auto-preview grep:.::<C-R><C-W><CR>
+" Quick MRU search
+nnoremap <silent> [unite]m :<C-u>Unite -buffer-name=mru file_mru<CR>
+" Quick Buffer search
+nnoremap <silent> [unite]b :<C-u>Unite -buffer-name=buffer buffer<CR>
+" For ack.
+" Use ag for search
+if executable('ag')
+  let g:unite_source_grep_command = 'ag'
+  let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
+  let g:unite_source_grep_recursive_opt = ''
+elseif executable('ack-grep')
+  let g:unite_source_grep_command = 'ack-grep'
+  " Match whole word only. This might/might not be a good idea
+  let g:unite_source_grep_default_opts = '--no-heading --no-color -a -w'
+  let g:unite_source_grep_recursive_opt = ''
+elseif executable('ack')
+  let g:unite_source_grep_command = 'ack'
+  let g:unite_source_grep_default_opts = '--no-heading --no-color -a -w'
+  let g:unite_source_grep_recursive_opt = ''
+endif
+" Shorten the default update date of 500ms
+let g:unite_update_time = 200
+let g:unite_source_file_mru_limit = 1000
+let g:unite_cursor_line_highlight = 'TabLineSel'
 
