@@ -18,15 +18,17 @@ endfun
 
 call SetupVAM()
 VAMActivate matchit.zip vim-addon-commenting
-VAMActivate inkpot " 256-color colorscheme
-VAMActivate fugitive " git hotness
-VAMActivate unite
-VAMActivate vimproc
-VAMActivate Tagbar
-VAMActivate ack
-VAMActivate rails
-VAMActivate vim-airline
-VAMActivate github:tpope/vim-vinegar
+VAMActivate inkpot      " 256-color colorscheme
+VAMActivate fugitive    " git hotness
+VAMActivate unite       " file/buffer/grep search
+VAMActivate unite-ack   " file/buffer/grep search
+VAMActivate vimproc     " async library (used by unite) requires vim +lua
+VAMActivate Tagbar      " method/attribute browser based on tags
+VAMActivate ack         " fast search across files
+VAMActivate rails       " helpers for Rails development
+VAMActivate vim-airline " sexy statusbar
+VAMActivate github:tpope/vim-vinegar  " use - to pull up file browser
+VAMActivate vim-sneak   " Super-charged f/t navigation (uses s or z key)
 
 " Set cursor to last position you were at when you opened the file
 set viminfo='10,\"100,:20,%,n~/.viminfo
@@ -62,9 +64,6 @@ set expandtab
 
 " Preserve column when jumping around
 set nostartofline
-
-" Allow mouse use in console
-set mouse=a
 
 " Sometimes fugitive diffs get confused and lose highlighting
 nnoremap <F2> :diffoff \| syn on<cr>
@@ -102,8 +101,7 @@ call unite#filters#sorter_default#use(['sorter_rank'])
 nnoremap [unite] <Nop>
 nmap <space> [unite]
 " General fuzzy search
-nnoremap <silent> [unite]<space> :<C-u>Unite
-      \ -buffer-name=files buffer bookmark file_rec/async<CR>
+nnoremap <silent> [unite]<space> :<C-u>Unite -buffer-name=files buffer file_rec/async<CR>
 " Quick file search
 nnoremap <silent> [unite]f :<C-u>Unite -buffer-name=files file_rec/async file/new -start-insert<CR>
 " Quick grep from cwd
