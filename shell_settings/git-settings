@@ -1,0 +1,9 @@
+alias gpr="git pull --rebase"
+alias gcm="git checkout master"
+alias gcmf="git checkout --force master"
+alias gst="git status"
+
+function cleanup_branches {
+  git branch --merged | grep -v \"\*\" | grep -vw master | xargs -n 1 git branch -d
+  git remote prune origin
+}
