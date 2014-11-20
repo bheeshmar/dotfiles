@@ -12,4 +12,4 @@ PROMPT_COMMAND="$PROMPT_COMMAND; history -a"
 # Use my inputrc
 export INPUTRC=$MY_SHELL_SETTINGS/settings.inputrc
 
-source $MY_SHELL_SETTINGS/git-settings
+source $MY_SHELL_SETTINGS/git-settings.sh
