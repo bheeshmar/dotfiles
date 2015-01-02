@@ -12,9 +12,12 @@ To use my vim settings, create this ~/.vimrc:
     set runtimepath^=$HOME/dotfiles/vim_settings
     runtime vimrc
 
+Or just symlink: `ln -s $HOME/dotfiles/vimrc ~/.vimrc`
+
 To use my shell settings (bash and inputrc customizations), add the following
 line to the bottom of ~/.bashrc:
 
     export MY_SHELL_SETTINGS=$HOME/dotfiles/shell_settings
     test -s $MY_SHELL_SETTINGS/settings.bash && source $MY_SHELL_SETTINGS/settings.bash
 
+Symlink the tmux configuration: `ln -s $HOME/dotfiles/tmux.conf ~/.tmux.conf`
