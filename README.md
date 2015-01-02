@@ -1,23 +1,26 @@
 Bheeshmar's Dotfiles
+--------------------
 
 Some really good bash tips here:
 http://www.ukuug.org/events/linux2003/papers/bash_tips/
 
-Using git/github through an HTTP proxy (include Linux instructions):
-http://blog.codeslower.com/2008/8/Using-PuTTY-and-SSL-to-securely-access-GitHub-repositories-via-SSH
-
 To use my vim settings, create this ~/.vimrc:
 
-    " Prepend the path to my custom settings and search for "vimrc" there.
-    set runtimepath^=$HOME/dotfiles/vim_settings
-    runtime vimrc
+```vim
+" Prepend the path to my custom settings and search for "vimrc" there.
+set runtimepath^=$HOME/dotfiles/vim_settings
+runtime vimrc
+```
 
 Or just symlink: `ln -s $HOME/dotfiles/vimrc ~/.vimrc`
 
 To use my shell settings (bash and inputrc customizations), add the following
 line to the bottom of ~/.bashrc:
 
-    export MY_SHELL_SETTINGS=$HOME/dotfiles/shell_settings
-    test -s $MY_SHELL_SETTINGS/settings.bash && source $MY_SHELL_SETTINGS/settings.bash
+
+```bash
+export MY_SHELL_SETTINGS=$HOME/dotfiles/shell_settings
+test -s $MY_SHELL_SETTINGS/settings.bash && source $MY_SHELL_SETTINGS/settings.bash
+```
 
 Symlink the tmux configuration: `ln -s $HOME/dotfiles/tmux.conf ~/.tmux.conf`
