@@ -97,6 +97,7 @@ nnoremap <C-k> :<C-u>Ack <C-r><C-w> lib app<CR>
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
 " Use the rank sorter for everything
 call unite#filters#sorter_default#use(['sorter_rank'])
+call unite#custom#source('file_rec/async', 'ignore_pattern', 'node_modules')
 " Map space to the prefix for Unite
 nnoremap [unite] <Nop>
 nmap <space> [unite]

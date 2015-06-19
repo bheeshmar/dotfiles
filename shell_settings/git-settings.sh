@@ -2,6 +2,8 @@ alias gpr="git pull --rebase"
 alias gcm="git checkout master"
 alias gcmf="git checkout --force master"
 alias gst="git status"
+alias glist='for ref in $(git for-each-ref --sort=-committerdate --format="%(refname)" refs/heads/ ); do git log -n1 $ref --pretty=format:"%Cgreen%cr%Creset %C(yellow)%d%Creset %C(bold blue)<%an>%Creset%n" | cat ; done | awk '\''! a[$0]++'\'''
+alias glistr='for ref in $(git for-each-ref --sort=-committerdate --format="%(refname)" refs/heads/ refs/remotes ); do git log -n1 $ref --pretty=format:"%Cgreen%cr%Creset %C(yellow)%d%Creset %C(bold blue)<%an>%Creset%n" | cat ; done | awk '\''! a[$0]++'\'''
 
 function cleanup_branches {
   git branch --merged | grep -v \"\*\" | grep -vw master | xargs -n 1 git branch -d
