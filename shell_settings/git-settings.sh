@@ -1,4 +1,5 @@
 alias gpr="git pull --rebase"
+alias gcl="git checkout -"
 alias gcm="git checkout master"
 alias gcmf="git checkout --force master"
 alias gst="git status"
