@@ -27,8 +27,9 @@ VAMActivate Tagbar      " method/attribute browser based on tags
 VAMActivate ack         " fast search across files
 VAMActivate rails       " helpers for Rails development
 VAMActivate vim-airline " sexy statusbar
-VAMActivate github:tpope/vim-vinegar  " use - to pull up file browser
+VAMActivate vinegar     " use - to pull up file browser
 VAMActivate vim-sneak   " Super-charged f/t navigation (uses s or z key)
+VAMActivate github:w0rp/ale           " Auto-linting
 
 " Set cursor to last position you were at when you opened the file
 set viminfo='10,\"100,:20,%,n~/.viminfo
@@ -91,6 +92,12 @@ inoremap jk <Esc>
 " Use ag instead of ack
 let g:ackprg = 'ag --nogroup --nocolor --column'
 nnoremap <C-k> :<C-u>Ack <C-r><C-w> lib app<CR>
+
+" ALE settings
+let b:ale_fixers = {'javascript': ['prettier', 'eslint']}
+" Set this variable to 1 to fix files when you save them.
+" let g:ale_fix_on_save = 1
+let g:ale_javascript_pretier_options = {'javascript': ['prettier', 'eslint']}
 
 " Unite bindings
 " Use the fuzzy matcher for everything
