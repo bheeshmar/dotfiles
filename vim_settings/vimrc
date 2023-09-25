@@ -5,23 +5,29 @@ fun! SetupVAM()
   let c = get(g:, 'vim_addon_manager', {})
   let g:vim_addon_manager = c
   let c.plugin_root_dir = expand('$HOME', 1) . '/.vim/vim-addons'
+
+  " Force your ~/.vim/after directory to be last in &rtp always:
+  " let g:vim_addon_manager.rtp_list_hook = 'vam#ForceUsersAfterDirectoriesToBeLast'
+
   " most used options you may want to use:
   " let c.log_to_buf = 1
   " let c.auto_install = 0
   let &rtp.=(empty(&rtp)?'':',').c.plugin_root_dir.'/vim-addon-manager'
   if !isdirectory(c.plugin_root_dir.'/vim-addon-manager/autoload')
-    execute '!git clone --depth=1 git://github.com/MarcWeber/vim-addon-manager '
+    execute '!git clone --depth=1'
+        \       'https://github.com/MarcWeber/vim-addon-manager'
         \       shellescape(c.plugin_root_dir.'/vim-addon-manager', 1)
   endif
-  call vam#ActivateAddons([], {'auto_install' : 0})
+
+  " This provides the VAMActivate command, you could be passing plugin names, too
+  call vam#ActivateAddons([], {})
 endfun
+call SetupVAM()
 
 call SetupVAM()
-VAMActivate matchit.zip vim-addon-commenting
+VAMActivate vim-matchit vim-addon-commenting
 VAMActivate inkpot      " 256-color colorscheme
 VAMActivate fugitive    " git hotness
-VAMActivate unite       " file/buffer/grep search
-VAMActivate unite-ack   " file/buffer/grep search
 VAMActivate vimproc     " async library (used by unite) requires vim +lua
 VAMActivate Tagbar      " method/attribute browser based on tags
 VAMActivate ack         " fast search across files
@@ -30,6 +36,9 @@ VAMActivate vim-airline " sexy statusbar
 VAMActivate vinegar     " use - to pull up file browser
 VAMActivate vim-sneak   " Super-charged f/t navigation (uses s or z key)
 VAMActivate github:w0rp/ale           " Auto-linting
+VAMActivate github:junegunn/fzf         " Fuzzy find
+VAMActivate github:junegunn/fzf.vim         " Fuzzy find
+VAMActivate github:junegunn/vim-easy-align  " Align helper (for tables)
 
 " Set cursor to last position you were at when you opened the file
 set viminfo='10,\"100,:20,%,n~/.viminfo
@@ -71,12 +80,13 @@ nnoremap <F2> :diffoff \| syn on<cr>
 nnoremap <F3> :cnext<cr>
 nnoremap <F4> :cprev<cr>
 
-nnoremap <leader>gs :Gstatus<cr>
-nnoremap <leader>gd :Gdiff<cr>
-nnoremap <leader>gb :Gblame<cr>
+nnoremap <leader>gs :Git<cr>
+nnoremap <leader>gd :Gdiffsplit<cr>
+nnoremap <leader>gb :Git blame<cr>
 nnoremap <leader>tt :TagbarToggle<cr>
 nnoremap <leader>d :bdelete<cr>
 nnoremap <leader>n :set number!<cr>
+nnoremap <leader>p :set paste!<cr>
 
 " Highlight trailing whitespace
 highlight ExtraWhitespace ctermbg=red guibg=red
@@ -97,45 +107,18 @@ nnoremap <C-k> :<C-u>Ack <C-r><C-w> lib app<CR>
 let b:ale_fixers = {'javascript': ['prettier', 'eslint']}
 " Set this variable to 1 to fix files when you save them.
 " let g:ale_fix_on_save = 1
-let g:ale_javascript_pretier_options = {'javascript': ['prettier', 'eslint']}
+let g:ale_javascript_prettier_options = {'javascript': ['prettier', 'eslint']}
 
-" Unite bindings
-" Use the fuzzy matcher for everything
-call unite#filters#matcher_default#use(['matcher_fuzzy'])
-" Use the rank sorter for everything
-call unite#filters#sorter_default#use(['sorter_rank'])
-call unite#custom#source('file_rec/async', 'ignore_pattern', 'node_modules')
-" Map space to the prefix for Unite
-nnoremap [unite] <Nop>
-nmap <space> [unite]
-" General fuzzy search
-nnoremap <silent> [unite]<space> :<C-u>Unite -buffer-name=files buffer file_rec/async<CR>
-" Quick file search
-nnoremap <silent> [unite]f :<C-u>Unite -buffer-name=files file_rec/async file/new -start-insert<CR>
-" Quick grep from cwd
-nnoremap <silent> [unite]g :<C-u>Unite -buffer-name=grep -auto-preview grep:.::<C-R><C-W><CR>
-" Quick MRU search
-nnoremap <silent> [unite]m :<C-u>Unite -buffer-name=mru file_mru<CR>
-" Quick Buffer search
-nnoremap <silent> [unite]b :<C-u>Unite -buffer-name=buffer buffer<CR>
-" For ack.
-" Use ag for search
-if executable('ag')
-  let g:unite_source_grep_command = 'ag'
-  let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
-  let g:unite_source_grep_recursive_opt = ''
-elseif executable('ack-grep')
-  let g:unite_source_grep_command = 'ack-grep'
-  " Match whole word only. This might/might not be a good idea
-  let g:unite_source_grep_default_opts = '--no-heading --no-color -a -w'
-  let g:unite_source_grep_recursive_opt = ''
-elseif executable('ack')
-  let g:unite_source_grep_command = 'ack'
-  let g:unite_source_grep_default_opts = '--no-heading --no-color -a -w'
-  let g:unite_source_grep_recursive_opt = ''
-endif
-" Shorten the default update date of 500ms
-let g:unite_update_time = 200
-let g:unite_source_file_mru_limit = 1000
-let g:unite_cursor_line_highlight = 'TabLineSel'
+" FZF settings
+" Set preview full-width above results
+let g:fzf_preview_window = ['up:50%', 'ctrl-/']
 
+nnoremap <space>f :GFiles<CR>
+nnoremap <space>b :Buffers<CR>
+nnoremap <space>g :Ag <C-R><C-W><CR>
+
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
