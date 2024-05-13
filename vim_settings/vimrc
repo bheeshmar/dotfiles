@@ -31,6 +31,7 @@ VAMActivate fugitive    " git hotness
 VAMActivate vimproc     " async library (used by unite) requires vim +lua
 VAMActivate Tagbar      " method/attribute browser based on tags
 VAMActivate ack         " fast search across files
+VAMActivate vim-ruby    " helpers for Ruby development
 VAMActivate rails       " helpers for Rails development
 VAMActivate vim-airline " sexy statusbar
 VAMActivate vinegar     " use - to pull up file browser
