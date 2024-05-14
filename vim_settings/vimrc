@@ -1,125 +1,61 @@
-set nocompatible | filetype indent plugin on | syn on
-
-" Install plugins using vim-addon-manager, which self-installs if needed
-fun! SetupVAM()
-  let c = get(g:, 'vim_addon_manager', {})
-  let g:vim_addon_manager = c
-  let c.plugin_root_dir = expand('$HOME', 1) . '/.vim/vim-addons'
-
-  " Force your ~/.vim/after directory to be last in &rtp always:
-  " let g:vim_addon_manager.rtp_list_hook = 'vam#ForceUsersAfterDirectoriesToBeLast'
-
-  " most used options you may want to use:
-  " let c.log_to_buf = 1
-  " let c.auto_install = 0
-  let &rtp.=(empty(&rtp)?'':',').c.plugin_root_dir.'/vim-addon-manager'
-  if !isdirectory(c.plugin_root_dir.'/vim-addon-manager/autoload')
-    execute '!git clone --depth=1'
-        \       'https://github.com/MarcWeber/vim-addon-manager'
-        \       shellescape(c.plugin_root_dir.'/vim-addon-manager', 1)
+" Install plugins using vim-plug, which self-installs if needed
+fun! SetupVimPlug()
+  if !filereadable(expand('~/.vim/autoload/plug.vim'))
+    execute '!curl -fLo ~/.vim/autoload/plug.vim --create-dirs'
+        \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
   endif
-
-  " This provides the VAMActivate command, you could be passing plugin names, too
-  call vam#ActivateAddons([], {})
 endfun
-call SetupVAM()
+call SetupVimPlug()
 
-call SetupVAM()
-VAMActivate vim-matchit vim-addon-commenting
-VAMActivate inkpot      " 256-color colorscheme
-VAMActivate fugitive    " git hotness
-VAMActivate vimproc     " async library (used by unite) requires vim +lua
-VAMActivate Tagbar      " method/attribute browser based on tags
-VAMActivate ack         " fast search across files
-VAMActivate vim-ruby    " helpers for Ruby development
-VAMActivate rails       " helpers for Rails development
-VAMActivate vim-airline " sexy statusbar
-VAMActivate vinegar     " use - to pull up file browser
-VAMActivate vim-sneak   " Super-charged f/t navigation (uses s or z key)
-VAMActivate github:w0rp/ale           " Auto-linting
-VAMActivate github:junegunn/fzf         " Fuzzy find
-VAMActivate github:junegunn/fzf.vim         " Fuzzy find
-VAMActivate github:junegunn/vim-easy-align  " Align helper (for tables)
+call plug#begin()
+Plug 'tpope/vim-sensible'
+" Git
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
+" Enhanced statusbar
+Plug 'itchyny/lightline.vim'
+" Easy file navigation
+Plug 'tpope/vim-vinegar'
+Plug 'preservim/tagbar'
+" Fuzzyfinder
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+" Ruby/Rails
+Plug 'vim-ruby/vim-ruby'
+Plug 'tpope/vim-rails'
+Plug 'dense-analysis/ale'
+" colorschemes
+Plug 'dracula/vim', { 'as': 'dracula' }
+Plug 'ciaranm/inkpot'
+call plug#end()
 
-" Set cursor to last position you were at when you opened the file
-set viminfo='10,\"100,:20,%,n~/.viminfo
-autocmd BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
+colorscheme wildcharm
 
-" Use 256 colors and a nice colorscheme
-set t_Co=256
-colorscheme inkpot
-
-" Backspace over everything
-set backspace=2
-
-" Search case-insensitive (unless mixed case) incrementally with highlight, CR will clear
-set ignorecase
-set smartcase
-set incsearch
-set hlsearch
-nnoremap <cr> :nohl<cr><cr>
-
-" Respect modelines
-set modeline
-
-" Use the ruler to give cursor position
-set ruler
-
-"" Always show the status line
-set laststatus=2
-
-" Default to 2 spaces for tabs
-set tabstop=2
-set shiftwidth=2
-set expandtab
-
-" Preserve column when jumping around
-set nostartofline
-
-" Sometimes fugitive diffs get confused and lose highlighting
-nnoremap <F2> :diffoff \| syn on<cr>
-nnoremap <F3> :cnext<cr>
-nnoremap <F4> :cprev<cr>
-
-nnoremap <leader>gs :Git<cr>
-nnoremap <leader>gd :Gdiffsplit<cr>
-nnoremap <leader>gb :Git blame<cr>
-nnoremap <leader>tt :TagbarToggle<cr>
-nnoremap <leader>d :bdelete<cr>
-nnoremap <leader>n :set number!<cr>
-nnoremap <leader>p :set paste!<cr>
-
-" Highlight trailing whitespace
-highlight ExtraWhitespace ctermbg=red guibg=red
-match ExtraWhitespace /\s\+$/
-
-" Highlight 81st column
-highlight ColorColumn ctermbg=magenta
-call matchadd('ColorColumn', '\%81v', 100)
-
-" Use jk as another form of Esc
-inoremap jk <Esc>
-
-" Use ag instead of ack
-let g:ackprg = 'ag --nogroup --nocolor --column'
-nnoremap <C-k> :<C-u>Ack <C-r><C-w> lib app<CR>
-
-" ALE settings
-let b:ale_fixers = {'javascript': ['prettier', 'eslint']}
-" Set this variable to 1 to fix files when you save them.
-" let g:ale_fix_on_save = 1
-let g:ale_javascript_prettier_options = {'javascript': ['prettier', 'eslint']}
+" Custom mappings
+nnoremap <leader>gs :Git<CR>
+nnoremap <leader>gd :Gdiffsplit<CR>
+nnoremap <leader>gb :Git blame<CR>
+nnoremap <leader>tt :TagbarToggle<CR>
+nnoremap <leader>d :bdelete<CR>
+nnoremap <leader>n :set number!<CR>
+nnoremap <leader>p :set paste!<CR>
 
 " FZF settings
 " Set preview full-width above results
-let g:fzf_preview_window = ['up:50%', 'ctrl-/']
+" let g:fzf_preview_window = ['up:50%', 'ctrl-/']
 
 nnoremap <space>f :GFiles<CR>
 nnoremap <space>b :Buffers<CR>
-nnoremap <space>g :Ag <C-R><C-W><CR>
+nnoremap <space>g :Rg <C-R><C-W><CR>
 
-" Start interactive EasyAlign in visual mode (e.g. vipga)
-xmap ga <Plug>(EasyAlign)
-
-" Start interactive EasyAlign for a motion/text object (e.g. gaip)
-nmap ga <Plug>(EasyAlign)
+" Add Git branch name to statusbar
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'FugitiveHead'
+      \ },
+      \ }
