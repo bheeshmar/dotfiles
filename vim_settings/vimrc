@@ -9,9 +9,10 @@ call SetupVimPlug()
 
 call plug#begin()
 Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-surround'
 " Git
 Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-rhubarb'
+Plug 'tpope/vim-rhubarb' " GBrowse opens the github page
 " Enhanced statusbar
 Plug 'itchyny/lightline.vim'
 " Easy file navigation
@@ -24,12 +25,22 @@ Plug 'junegunn/fzf.vim'
 Plug 'vim-ruby/vim-ruby'
 Plug 'tpope/vim-rails'
 Plug 'dense-analysis/ale'
+" AI
+Plug 'github/copilot.vim'
 " colorschemes
 Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'ciaranm/inkpot'
 call plug#end()
 
+set background=dark
 colorscheme wildcharm
+set regexpengine=0 " use new regex engine to speed up typescript syntax highlighting
+
+" highlight search matches as they are typed
+set hlsearch
+" ignore case unless search term contains CAPS
+set ignorecase
+set smartcase
 
 " Custom mappings
 nnoremap <leader>gs :Git<CR>
@@ -39,6 +50,7 @@ nnoremap <leader>tt :TagbarToggle<CR>
 nnoremap <leader>d :bdelete<CR>
 nnoremap <leader>n :set number!<CR>
 nnoremap <leader>p :set paste!<CR>
+nnoremap <leader>r :ALEFix rubocop<CR>
 
 " FZF settings
 " Set preview full-width above results
@@ -47,10 +59,27 @@ nnoremap <leader>p :set paste!<CR>
 nnoremap <space>f :GFiles<CR>
 nnoremap <space>b :Buffers<CR>
 nnoremap <space>g :Rg <C-R><C-W><CR>
+nnoremap <space>t :Tags <C-R><C-W><CR>
+nnoremap <space>T :Tags<CR>
+
+imap <silent><script><expr> <C-E> copilot#Accept("\<CR>")
+let g:copilot_no_tab_map = v:true
+let g:copilot_node_command = "/Users/bheeshmar/.asdf/shims/node"
+
+
+" From https://github.com/junegunn/fzf.vim/issues/596#issuecomment-538830525
+" Redefine Rg command to allow rg arguments to pass through
+" such as `-tyaml` for yaml files or `-F` for literal strings
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always --smart-case '.(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
 
 " Add Git branch name to statusbar
 let g:lightline = {
-      \ 'colorscheme': 'wombat',
+      \ 'colorscheme': 'powerlineish',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
