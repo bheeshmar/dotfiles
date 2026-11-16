@@ -19,14 +19,22 @@ Plug 'itchyny/lightline.vim'
 Plug 'tpope/vim-vinegar'
 Plug 'preservim/tagbar'
 " Fuzzyfinder
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf' ", { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 " Ruby/Rails
 Plug 'vim-ruby/vim-ruby'
 Plug 'tpope/vim-rails'
 Plug 'dense-analysis/ale'
-" AI
-Plug 'github/copilot.vim'
+" Enhanced navigation
+Plug 'easymotion/vim-easymotion'
+" Auto-pairs for brackets
+Plug 'jiangmiao/auto-pairs'
+" Git changes in gutter
+Plug 'airblade/vim-gitgutter'
+" Ruby end insertion
+Plug 'tpope/vim-endwise'
+" Markdown Wiki navigation
+Plug 'mmai/vim-markdown-wiki'
 " colorschemes
 Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'ciaranm/inkpot'
@@ -36,21 +44,46 @@ set background=dark
 colorscheme wildcharm
 set regexpengine=0 " use new regex engine to speed up typescript syntax highlighting
 
+" Performance improvements
+set lazyredraw " Improve performance during macros/scripts
+
+" Persistent undo
+set undofile
+set undodir=~/.vim/undodir
+if !isdirectory(expand(&undodir)) | call mkdir(expand(&undodir), 'p') | endif
+
+" More intuitive splits
+set splitbelow
+set splitright
+
 " highlight search matches as they are typed
 set hlsearch
 " ignore case unless search term contains CAPS
 set ignorecase
 set smartcase
 
+" Show tabs and trailing spaces
+set list listchars=tab:▸\ ,trail:·
+
+" Prompt when closing unsaved files
+set confirm
+
+" Better command completion
+set wildmode=longest:full,full
+
 " Custom mappings
 nnoremap <leader>gs :Git<CR>
 nnoremap <leader>gd :Gdiffsplit<CR>
 nnoremap <leader>gb :Git blame<CR>
+nnoremap <leader>gp :Git push<CR>
 nnoremap <leader>tt :TagbarToggle<CR>
 nnoremap <leader>d :bdelete<CR>
 nnoremap <leader>n :set number!<CR>
 nnoremap <leader>p :set paste!<CR>
 nnoremap <leader>r :ALEFix rubocop<CR>
+nnoremap <leader>w :w<CR>
+" Clear search highlights with Ctrl-L
+nnoremap <C-l> :nohl<CR><C-l>
 
 " FZF settings
 " Set preview full-width above results
@@ -62,15 +95,12 @@ nnoremap <space>g :Rg <C-R><C-W><CR>
 nnoremap <space>t :Tags <C-R><C-W><CR>
 nnoremap <space>T :Tags<CR>
 
-imap <silent><script><expr> <C-E> copilot#Accept("\<CR>")
-let g:copilot_no_tab_map = v:true
-let g:copilot_node_command = "/Users/bheeshmar/.asdf/shims/node"
 
 
 " From https://github.com/junegunn/fzf.vim/issues/596#issuecomment-538830525
 " Redefine Rg command to allow rg arguments to pass through
 " such as `-tyaml` for yaml files or `-F` for literal strings
-command! -bang -nargs=* Rg
+command! -bang -nargs=* -complete=file Rg
   \ call fzf#vim#grep(
   \   'rg --column --line-number --no-heading --color=always --smart-case '.(<q-args>), 1,
   \   <bang>0 ? fzf#vim#with_preview('up:60%')
@@ -88,3 +118,6 @@ let g:lightline = {
       \   'gitbranch': 'FugitiveHead'
       \ },
       \ }
+
+" ALE configuration for Ruby
+let g:ale_fixers = {'ruby': ['rubocop']}
